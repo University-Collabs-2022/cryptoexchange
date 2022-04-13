@@ -4,6 +4,8 @@ var passport = require("passport");
 require("dotenv").config();
 var gitHubRoutes = require("./routes/githubOAuth.js");
 var googleRoutes = require("./routes/googleOAuth.js");
+var loginRoutes = require("./routes/loginOAuth.js");
+var registerRoutes = require("./routes/registerOAuth.js");
 const mongoose = require("mongoose");
 const isAuth = require("./middleware/isAuth.js");
 const constants = require("./constants/values.js");
@@ -37,6 +39,8 @@ server.use(passport.session());
 
 server.use(googleRoutes);
 server.use(gitHubRoutes);
+server.use(loginRoutes);
+server.use(registerRoutes);
 server.get(constants.UNAUTHORIZED_URL, (req, res) => {
   res.status(401).send("Unauthorized, please login");
 });

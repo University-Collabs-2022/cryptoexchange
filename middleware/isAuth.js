@@ -17,6 +17,12 @@ async function isAuth(req, res, next) {
           username: req.session.passport.user.username,
         });
         break;
+      case "google":
+          authorizeCondition = await Users.findOne({
+            userId: req.session.passport.user.id,
+            username: req.session.passport.user.username,
+          });
+        break;
       default:
         authorizeCondition = await Users.findOne({
           userId: req.session.passport.user.id,

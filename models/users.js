@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const usersSchema = mongoose.Schema({
-  userId: {
+const usersSchema = mongoose.Schema({ //password? phoneNumber?
+  userId: { //? for register
     type: String,
     require: true,
   },
-  displayName: {
+  displayName: {//missing in register form
     type: String,
     require: true,
   },
@@ -13,7 +13,7 @@ const usersSchema = mongoose.Schema({
   email: String,
   provider: {
     type: String,
-    enum: ["github", "google"],
+    enum: ["github", "google", "register"],
     default: "github",
   },
   createdAt: { type: Date, default: Date.now },
