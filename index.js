@@ -2,14 +2,14 @@ var express = require("express");
 var session = require("express-session");
 var passport = require("passport");
 require("dotenv").config();
-var gitHubRoutes = require("./routes/githubOAuth.js");
-var googleRoutes = require("./routes/googleOAuth.js");
-var loginRoutes = require("./routes/loginOAuth.js");
-var registerRoutes = require("./routes/registerOAuth.js");
+var gitHubRoutes = require("./src/routes/githubOAuth.js");
+var googleRoutes = require("./src/routes/googleOAuth.js");
+var loginRoutes = require("./src/routes/loginOAuth.js");
+var registerRoutes = require("./src/routes/registerOAuth.js");
 const mongoose = require("mongoose");
-const isAuth = require("./middleware/isAuth.js");
-const constants = require("./constants/values.js");
-const Users = require("./models/users.js");
+const isAuth = require("./src/middleware/isAuth.js");
+const constants = require("./src/constants/values.js");
+const Users = require("./src/models/users.js");
 
 var server = express();
 
