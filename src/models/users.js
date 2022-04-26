@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+//ADD WALLET!
 const usersSchema = mongoose.Schema({
   displayName: { //first name + last name
     type: String,
