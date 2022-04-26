@@ -9,9 +9,9 @@ server.post('/auth/register',
   async (req, res) =>{
       const { displayName, username, email, password } = req.body;
 
-      var encrPassword;
+      var encryptedPassword;
       await encrypt.encryptPassword(password).then(encryptedPass => {
-        encrPassword = encryptedPass;
+        encryptedPassword = encryptedPass;
       })
 
     const user = {
@@ -19,7 +19,7 @@ server.post('/auth/register',
         username,
         email,
         provider: "register",
-        password: encrPassword,
+        password: encryptedPassword,
     }
 
     const userReq = await Users.findOne({ username });
