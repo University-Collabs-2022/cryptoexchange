@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 
-const usersSchema = mongoose.Schema({ //password? phoneNumber?
-  userId: { //? for register
+const usersSchema = mongoose.Schema({
+  displayName: { //first name + last name
     type: String,
     require: true,
   },
-  displayName: {//missing in register form
+  username: {
     type: String,
     require: true,
+    unique: true
   },
-  username: String,
   email: String,
   provider: {
     type: String,
     enum: ["github", "google", "register"],
     default: "github",
   },
+  password: String,
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now },
 });
