@@ -42,20 +42,21 @@ server.get(
     failureRedirect: constants.UNAUTHORIZED_URL,
   }),
   async function (req, res) {
-    const { id, displayName, username, provider } = req.user;
-    const filter = { userId: id, username };
+    console.log(req.user);
+    const { displayName, username, provider } = req.user;
+    // const filter = { username };
     const entry = {
-      ...filter,
+      username,
       displayName,
       provider,
     };
-    const qRes = await Users.findOne(filter);
+    const qRes = await Users.findOne({ username });
     if (!qRes) {
       await Users.create(entry);
     } else {
-      await Users.updateOne(filter, { lastLogin: new Date() });
+      await Users.updateOne({ username }, { lastLogin: new Date() });
     }
-    res.redirect(`/api/users/${req.user.id}`);
+    res.redirect(`/api/users/${req.user.username}`);
   }
 );
 
