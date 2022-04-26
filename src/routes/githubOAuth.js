@@ -42,9 +42,7 @@ server.get(
     failureRedirect: constants.UNAUTHORIZED_URL,
   }),
   async function (req, res) {
-    console.log(req.user);
     const { displayName, username, provider } = req.user;
-    // const filter = { username };
     const entry = {
       username,
       displayName,
