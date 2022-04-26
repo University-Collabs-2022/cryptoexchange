@@ -49,11 +49,10 @@ server.get(
     failureRedirect: constants.UNAUTHORIZED_URL,
   }),
   async function (req, res) {
-    const { id, displayName, emails } = req.user;
-    const filter = { userId: id, email: emails[0].value };
+    const { displayName, emails } = req.user;
+    const filter = { email: emails[0].value, displayName };
     const entry = {
       ...filter,
-      displayName,
       provider: "google",
     };
     const qRes = await Users.findOne(filter);
@@ -62,7 +61,7 @@ server.get(
     } else {
       await Users.updateOne(filter, { lastLogin: new Date() });
     }
-    res.redirect(`/api/users/${req.user.id}`);
+    res.redirect(`/api/users/${req.user.displayName}`);
   }
 );
 
