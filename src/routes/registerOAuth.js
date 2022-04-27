@@ -1,19 +1,25 @@
 var express = require("express");
 const Users = require("../models/users.js");
-
+var encrypt = require("../services/encryptPassword")
 const server = express();
 
 server.use(express.json());
 
 server.post('/auth/register',
   async (req, res) =>{
-    const { displayName, username, email, password } = req.body;
+      const { displayName, username, email, password } = req.body;
+
+      var encryptedPassword;
+      await encrypt.encryptPassword(password).then(encryptedPass => {
+        encryptedPassword = encryptedPass;
+      })
+
     const user = {
         displayName,
         username,
         email,
         provider: "register",
-        password,
+        password: encryptedPassword,
     }
 
     const userReq = await Users.findOne({ username });
