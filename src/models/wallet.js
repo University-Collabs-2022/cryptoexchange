@@ -6,16 +6,18 @@ const walletSchema = mongoose.Schema({
         ref: 'Users'
     },
 
-    currencyId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Currency'
-    },
+    currecy: [{
+        currencyId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Currency'
+        },
 
-    amount: {
-        type: Number,
-        require: true
-    },
-
+        amount: {
+            type: Number,
+            require: true
+        },
+    }
+    ]
 });
 
 //walletSchema.index({ userId: 1, email: 1 });
