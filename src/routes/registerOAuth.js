@@ -1,6 +1,6 @@
-var express = require("express");
+const express = require("express");
 const Users = require("../models/users.js");
-var encrypt = require("../services/encryptPassword")
+const encrypt = require("../services/encryptPassword")
 const server = express();
 
 server.use(express.json());
@@ -9,7 +9,7 @@ server.post('/auth/register',
   async (req, res) =>{
       const { displayName, username, email, password } = req.body;
 
-      var encryptedPassword;
+      let encryptedPassword;
       await encrypt.encryptPassword(password).then(encryptedPass => {
         encryptedPassword = encryptedPass;
       })

@@ -1,10 +1,10 @@
-var express = require("express");
-var passport = require("passport");
-var GitHubStrategy = require("passport-github2").Strategy;
+const express = require("express");
+const passport = require("passport");
+const GitHubStrategy = require("passport-github2").Strategy;
 const constants = require("../constants/values.js");
 const Users = require("../models/users.js");
 
-var server = express();
+const server = express();
 
 const GITHUB_CLIENT_ID = "b1cb3875404707d0ca4c";
 const GITHUB_CLIENT_SECRET = "a61cc8195dd3dc34107f389ede5943fb3962d3f4";

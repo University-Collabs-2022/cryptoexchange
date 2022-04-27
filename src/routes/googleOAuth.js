@@ -1,10 +1,10 @@
-var express = require("express");
-var passport = require("passport");
-var GoogleStrategy = require("passport-google-oauth20").Strategy;
+const express = require("express");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const constants = require("../constants/values.js");
 const Users = require("../models/users.js");
 
-var server = express();
+const server = express();
 
 const GOOGLE_CLIENT_ID =
   "45064056279-45qso7g003cin5hvo5cogi1ihp5o91oe.apps.googleusercontent.com";

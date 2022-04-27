@@ -1,7 +1,7 @@
-var express = require("express");
+const express = require("express");
 const Users = require("../models/users.js");
 
-var encrypt = require("../services/encryptPassword");
+const encrypt = require("../services/encryptPassword");
 
 const server = express();
 
@@ -17,7 +17,7 @@ server.post("/auth/login", async (req, res) => {
       error: "401: User not found",
     });
   } else {
-    var encrPassword;
+    let encrPassword;
     await encrypt.encryptPassword(password).then((encryptedPass) => {
       encrPassword = encryptedPass;
     });
