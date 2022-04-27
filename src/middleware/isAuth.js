@@ -13,19 +13,17 @@ async function isAuth(req, res, next) {
     switch (sessUser.provider) {
       case "github":
         authorizeCondition = await Users.findOne({
-          userId: req.session.passport.user.id,
           username: req.session.passport.user.username,
         });
         break;
       case "google":
           authorizeCondition = await Users.findOne({
-            userId: req.session.passport.user.id,
-            username: req.session.passport.user.username,
+            email: req.session.passport.user.emails[0].value,
           });
         break;
       default:
         authorizeCondition = await Users.findOne({
-          userId: req.session.passport.user.id,
+          username: req.session.passport.user.username,
           email: req.session.passport.user.emails[0].value,
         });
     }
