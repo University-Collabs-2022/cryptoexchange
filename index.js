@@ -2,10 +2,13 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 require("dotenv").config();
+
 const gitHubRoutes = require("./src/routes/githubOAuth.js");
 const googleRoutes = require("./src/routes/googleOAuth.js");
 const loginRoutes = require("./src/routes/loginOAuth.js");
 const registerRoutes = require("./src/routes/registerOAuth.js");
+const addCryptoRoutes = require("./src/routes/crypto.js");
+
 const mongoose = require("mongoose");
 const isAuth = require("./src/middleware/isAuth.js");
 const constants = require("./src/constants/values.js");
@@ -41,6 +44,8 @@ server.use(googleRoutes);
 server.use(gitHubRoutes);
 server.use(loginRoutes);
 server.use(registerRoutes);
+server.use(addCryptoRoutes);
+
 server.get(constants.UNAUTHORIZED_URL, (req, res) => {
   res.status(401).send("Unauthorized, please login");
 });

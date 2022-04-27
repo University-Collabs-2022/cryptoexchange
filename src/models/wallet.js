@@ -6,7 +6,7 @@ const walletSchema = mongoose.Schema({
         ref: 'Users'
     },
 
-    currecy: [{
+    currency: [{
         currencyId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Currency'
