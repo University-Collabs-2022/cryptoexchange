@@ -4,7 +4,8 @@ const currencySchema = mongoose.Schema({
 
     currencyName: {
         type: String,
-        require: true
+        require: true,
+        unique: true
     },
 
     ratio: {

@@ -13,10 +13,24 @@ server.post("/addCrypto", async (req, res) => {
     availableAmount
   }
 
-  await Currency.create(
-    ...currency
-  )
+  const currencyReq = await Currency.findOne({ currencyName });
 
+  if (!currencyReq) {
+    await Currency.create(
+      currency
+    ).then(currency => {
+      res.status(200).json({
+        message: "Currency created successfully",
+        currency,
+      })
+    }
+    )
+  } else {
+    res.status(401).json({
+      message: "Currency not added",
+    });
+  }
 });
+
 
 module.exports = server;
