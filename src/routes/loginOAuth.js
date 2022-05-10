@@ -1,6 +1,6 @@
 const express = require("express");
 const Users = require("../models/users.js");
-
+const bcrypt = require('bcrypt');
 const encrypt = require("../services/encryptPassword");
 
 const server = express();
@@ -17,12 +17,13 @@ server.post("/auth/login", async (req, res) => {
       error: "401: User not found",
     });
   } else {
-    let encrPassword;
-    await encrypt.encryptPassword(password).then((encryptedPass) => {
-      encrPassword = encryptedPass;
+
+    let validPassword;
+    await encrypt.comparePassword(password, user.password).then((res) => {
+      validPassword = res
     });
 
-    const validPassword = await bcrypt.compare(encrPassword, user.password);
+
     if (!validPassword) {
       res.status(402).json({
         message: "Incorrect password!",

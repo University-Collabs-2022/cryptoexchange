@@ -3,6 +3,7 @@ const Users = require("../models/users.js");
 const encrypt = require("../services/encryptPassword")
 const constants = require("../constants/values")
 const Wallet = require("../models/wallet.js")
+const currency = require("../services/currencyHelpers")
 const server = express();
 
 server.use(express.json());
@@ -26,30 +27,29 @@ server.post('/auth/register',
 
     const userReq = await Users.findOne({ username });
 
+
     if (!userReq) {
       await Users.create({
         ...user
-      }).then(user => {
+      }).then(async user => {
+        await Wallet.create({
+          userId: user._id,
+          currency: [{
+            currencyId: await currency.getCurrencyId(constants.usd),
+            amount: constants.initialiAmount
+          }]
+        })
         res.status(200).json({
           message: "User successfully created",
           user,
         })
+
       }
       )
     } else {
       res.status(401).json({
         message: "User not created",
       });
-    }
-
-    if (!userReq) {
-      await Wallet.create({
-        userId: user._id,
-        currency: [{
-          currencyId: constants.usdId,
-          amount: constants.initialiAmount
-        }]
-      })
     }
   });
 
