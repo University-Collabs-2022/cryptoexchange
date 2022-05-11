@@ -17,12 +17,11 @@ server.post("/auth/login", async (req, res) => {
       error: "401: User not found",
     });
   } else {
-
+    
     let validPassword;
     await encrypt.comparePassword(password, user.password).then((res) => {
       validPassword = res
     });
-
 
     if (!validPassword) {
       res.status(402).json({

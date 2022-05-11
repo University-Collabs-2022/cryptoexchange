@@ -11,8 +11,9 @@ module.exports.encryptPassword = async function (password) {
 
 module.exports.comparePassword = async function (password, dbPassword) {
     let result;
-    await bcrypt.compare(password, dbPassword).then(function (response) {
+    await  bcrypt.compare( password, dbPassword).then(function(response) {
         result = response;
     });
     return result;
 };
+
