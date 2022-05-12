@@ -13,7 +13,7 @@ const ratioSchema = mongoose.Schema({
 
     ratio: {
         type: Number,
-        require: true,
+        required: true,
     }
 });
 
