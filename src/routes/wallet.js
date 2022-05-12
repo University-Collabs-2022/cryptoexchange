@@ -33,7 +33,6 @@ server.put("/Founds", async (req, res) => {
     )
     const totalAmount = wall.currency[usdIndex].amount + amount;
     wall.currency[usdIndex].amount = totalAmount;
-    console.log(wall);
 
     await Wallet.findOneAndUpdate({ userId: user._id, "currency.currencyId": usdId }, {
       "$set": { 'currency.$.amount': totalAmount }
