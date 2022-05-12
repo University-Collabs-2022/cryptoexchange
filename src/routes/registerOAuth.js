@@ -47,8 +47,8 @@ server.post('/auth/register',
       }
       )
     } else {
-      res.status(401).json({
-        message: "User not created",
+      res.status(409).json({
+        message: "Username already exists",
       });
     }
   });
