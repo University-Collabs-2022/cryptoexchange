@@ -15,7 +15,7 @@ const currencySchema = mongoose.Schema({
 
     availableAmount: {
         type: Number,
-        require: true
+        required: true
     },
 
 });
