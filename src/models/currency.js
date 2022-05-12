@@ -4,7 +4,7 @@ const currencySchema = mongoose.Schema({
 
     currencyName: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
 
