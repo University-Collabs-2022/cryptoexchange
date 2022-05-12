@@ -20,7 +20,6 @@ const currencySchema = mongoose.Schema({
 
 });
 
-//currencySchema.index({ userId: 1, email: 1 });
 
 const Currency = mongoose.model("Currency", currencySchema);
 

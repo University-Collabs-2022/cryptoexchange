@@ -20,8 +20,6 @@ const walletSchema = mongoose.Schema({
     ]
 });
 
-//walletSchema.index({ userId: 1, email: 1 });
-
 const Wallet = mongoose.model("Wallet", walletSchema);
 
 module.exports = Wallet;
