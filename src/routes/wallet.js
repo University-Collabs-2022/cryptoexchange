@@ -15,8 +15,6 @@ server.put("/Founds", async (req, res) => {
   const wall = await Wallet.findOne({ userId: user._id });
   const usdId = await currency.getCurrencyId(constants.usd);
 
-  console.log(user.username)
-  console.log(wall)
   let validPassword;
   await encrypt.comparePassword(password, user.password).then((res) => {
     validPassword = res
