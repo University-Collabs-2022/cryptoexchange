@@ -10,7 +10,7 @@ const currencySchema = mongoose.Schema({
 
     ratio: {
         type: Number,
-        require: true,
+        required: true,
     },
 
     availableAmount: {
