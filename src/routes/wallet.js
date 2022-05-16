@@ -44,8 +44,19 @@ server.put("/Founds", async (req, res) => {
 
 });
 
-server.get("/api/getCurrency", async (req, res) => {
-
+server.get("/api/wallet", async (req, res) => {
+  const username = req.query.username
+  await Users.findOne({ username })
+    .then(
+      async user => {
+        const userId = user._id
+        const wallet = await Wallet.findOne({ userId })
+        res.status(200).json({
+          message: "Wallet successfully loaded",
+          wallet
+        });
+      }
+    )
 });
 
 module.exports = server;
