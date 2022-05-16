@@ -1,10 +1,10 @@
-var express = require("express");
-var passport = require("passport");
-var GitHubStrategy = require("passport-github2").Strategy;
+const express = require("express");
+const passport = require("passport");
+const GitHubStrategy = require("passport-github2").Strategy;
 const constants = require("../constants/values.js");
 const Users = require("../models/users.js");
 
-var server = express();
+const server = express();
 
 const GITHUB_CLIENT_ID = "b1cb3875404707d0ca4c";
 const GITHUB_CLIENT_SECRET = "a61cc8195dd3dc34107f389ede5943fb3962d3f4";
@@ -42,20 +42,19 @@ server.get(
     failureRedirect: constants.UNAUTHORIZED_URL,
   }),
   async function (req, res) {
-    const { id, displayName, username, provider } = req.user;
-    const filter = { userId: id, username };
+    const { displayName, username, provider } = req.user;
     const entry = {
-      ...filter,
+      username,
       displayName,
       provider,
     };
-    const qRes = await Users.findOne(filter);
+    const qRes = await Users.findOne({ username });
     if (!qRes) {
       await Users.create(entry);
     } else {
-      await Users.updateOne(filter, { lastLogin: new Date() });
+      await Users.updateOne({ username }, { lastLogin: new Date() });
     }
-    res.redirect(`/api/users/${req.user.id}`);
+    res.redirect(`/api/users/${req.user.username}`);
   }
 );
 
