@@ -1,6 +1,6 @@
 const express = require("express");
 const Users = require("../models/users.js");
-
+const bcrypt = require('bcrypt');
 const encrypt = require("../services/encryptPassword");
 
 const server = express();
