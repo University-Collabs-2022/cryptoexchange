@@ -49,14 +49,27 @@ server.get("/api/wallet", async (req, res) => {
   await Users.findOne({ username })
     .then(
       async user => {
-        const userId = user._id
-        const wallet = await Wallet.findOne({ userId })
-        res.status(200).json({
-          message: "Wallet successfully loaded",
-          wallet
-        });
+        if (user === null) {
+          res.status(404).json({
+            message: "User doesn't exists"
+          });
+        }
+        else {
+          const userId = user._id
+          const wallet = await Wallet.findOne({ userId })
+          res.status(200).json({
+            message: "Wallet successfully loaded",
+            wallet
+          });
+        }
       }
     )
+    .catch((error) => {
+      res.status(401).json({
+        message: "Something went wrong",
+        error
+      });
+    })
 });
 
 module.exports = server;
