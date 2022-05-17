@@ -44,8 +44,32 @@ server.put("/Founds", async (req, res) => {
 
 });
 
-server.get("/api/getCurrency", async (req, res) => {
-
+server.get("/api/wallet", async (req, res) => {
+  const username = req.query.username
+  await Users.findOne({ username })
+    .then(
+      async user => {
+        if (user === null) {
+          res.status(404).json({
+            message: "User doesn't exists"
+          });
+        }
+        else {
+          const userId = user._id
+          const wallet = await Wallet.findOne({ userId })
+          res.status(200).json({
+            message: "Wallet successfully loaded",
+            wallet
+          });
+        }
+      }
+    )
+    .catch((error) => {
+      res.status(401).json({
+        message: "Unauthorized access",
+        error
+      });
+    })
 });
 
 module.exports = server;
