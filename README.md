@@ -16,3 +16,13 @@
   - server at http://localhost:1234/api/
   - db connection successfull
 - visit `http://localhost:1234/auth/github`
+
+# name convention
+
+FOR BRANCH
+- Should be: feature/name-of-task
+E.g. feature/endpoint-get-wallet
+
+FOR COMMITS
+- Should be "[BE/DB/FE] Name-of-task: message"
+E.g. "[BE] Endpoint to get wallet: implement validation"

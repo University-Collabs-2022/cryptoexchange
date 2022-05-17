@@ -1,27 +1,29 @@
 const mongoose = require("mongoose");
 
+//ADD WALLET!
 const usersSchema = mongoose.Schema({
-  userId: {
+  displayName: { //first name + last name
     type: String,
     require: true,
   },
-  displayName: {
+  username: {
     type: String,
     require: true,
+    unique: true
   },
-  username: String,
   email: String,
   provider: {
     type: String,
-    enum: ["github", "google"],
+    enum: ["github", "google", "register"],
     default: "github",
   },
+  password: String,
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now },
 });
 
-usersSchema.index({ userId: 1, username: 1 });
-usersSchema.index({ userId: 1, email: 1 });
+usersSchema.index({ username: 1 });
+usersSchema.index({ email: 1 });
 
 const Users = mongoose.model("users", usersSchema);
 
