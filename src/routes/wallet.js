@@ -63,8 +63,7 @@ server.get("/wallet", async (req, res) => {
       const currencyObj = await currency.getCurrencyNameAndPrice(
         element.currencyId
       );
-      currencyObj["amount"] = element.amount;
-      response.push(currencyObj);
+      response.push({ ...currencyObj, amount: element.amount });
     }
 
     res.status(200).json({
