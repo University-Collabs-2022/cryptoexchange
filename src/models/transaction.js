@@ -27,6 +27,21 @@ const transactionSchema = mongoose.Schema({
         required: true
     },
 
+    availableExchangeAmount: {
+        type: Number,
+        required: true
+    },
+
+    cryptoInWallet: {
+        type: Number,
+        required: true
+    },
+
+    currencyInWallet: {
+        type: Number,
+        required: true
+    },
+
     transactionDate: {
         type: Date,
         default: Date.now
