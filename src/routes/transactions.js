@@ -4,7 +4,6 @@ const Wallet = require("../models/wallet.js");
 const Currency = require("../models/currency.js");
 const server = express();
 const currency = require("../services/currencyHelpers");
-const constants = require("../constants/values");
 const Transaction = require("../models/transaction");
 
 
@@ -15,11 +14,8 @@ server.post("/transaction", async (req, res) => {
 
     const user = await Users.findOne({ username });
     const wall = await Wallet.findOne({ userId: user._id });
-    //const usdId = await currency.getCurrencyId(constants.usd);
-
     const baseCurrencyId = await currency.getCurrencyId(baseCurrencyName);
     const exchangeCurrencyId = await currency.getCurrencyId(exchangeCurrencyName);
-
 
     const baseCurrencyIndex = wall.currency.findIndex(elm =>
         elm.currencyId.equals(baseCurrencyId)
@@ -28,21 +24,6 @@ server.post("/transaction", async (req, res) => {
     const exchangeCurrencyIndex = wall.currency.findIndex(elm =>
         elm.currencyId.equals(exchangeCurrencyId)
     );
-
-    if (exchangeCurrencyIndex === -1) {
-        const newCurrency = {
-            currencyId: exchangeCurrencyId,
-            amount: 0
-        }
-        console.log(newCurrency);
-        await Wallet.updateOne(
-            { _id: wall._id },
-            { $push: { currency: newCurrency } }
-        )
-    }
-
-    console.log(wall);
-
 
     const currencyForSold = await Currency.findOne({ currencyName: baseCurrencyName });
     const currencyForBuy = await Currency.findOne({ currencyName: exchangeCurrencyName });
@@ -58,6 +39,18 @@ server.post("/transaction", async (req, res) => {
         cryptoInWallet: wall.currency[baseCurrencyIndex].amount - amount,
         currencyInWallet: wall.currency[exchangeCurrencyIndex].amount + boughtAmount,
         date: Date.now,
+    }
+
+    if (exchangeCurrencyIndex === -1) {
+        const newCurrency = {
+            currencyId: exchangeCurrencyId,
+            amount: 0
+        }
+
+        await Wallet.updateOne(
+            { _id: wall._id },
+            { $push: { currency: newCurrency } }
+        )
     }
 
     await Transaction.create({
@@ -76,6 +69,7 @@ server.post("/transaction", async (req, res) => {
     }
     )
 
+
 });
 
-module.exports = server
+module.exports = server;
