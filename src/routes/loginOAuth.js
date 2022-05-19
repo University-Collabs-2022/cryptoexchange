@@ -49,34 +49,34 @@ server.post("/auth/changePassword", async (req, res) => {
 
   const user = await Users.findOne({ username });
   if (!user) {
-    res.status(401).json({
+    return res.status(401).json({
       message: "Username not found",
       error: "401: User not found",
     });
-  } else {
+  }
 
-    if (user.password != undefined) {
-      let validPassword;
-      await encrypt.comparePassword(oldPassword, user.password).then((res) => {
-        validPassword = res
+  if (user.password) {
+    let validPassword;
+    await encrypt.comparePassword(oldPassword, user.password).then((res) => {
+      validPassword = res
+    });
+
+    if (!validPassword) {
+      return res.status(402).json({
+        message: "Incorrect password!",
+        error: "402: Incorrect password",
       });
 
-      if (!validPassword) {
-        res.status(402).json({
-          message: "Incorrect password!",
-          error: "402: Incorrect password",
-        });
-      } else {
-        await Users.updateOne(
-          { _id: user._id },
-          { $set: { password: encryptedPassword } }
-        );
-        res.status(200).json({
-          message: "Password updated successfully"
-        });
-      }
     }
+    await Users.updateOne(
+      { _id: user._id },
+      { $set: { password: encryptedPassword } }
+    );
+    return res.status(200).json({
+      message: "Password updated successfully"
+    });
   }
+
 });
 
 module.exports = server;
