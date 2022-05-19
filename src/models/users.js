@@ -2,14 +2,15 @@ const mongoose = require("mongoose");
 
 //ADD WALLET!
 const usersSchema = mongoose.Schema({
-  displayName: { //first name + last name
+  displayName: {
+    //first name + last name
     type: String,
     require: true,
   },
   username: {
     type: String,
     require: true,
-    unique: true
+    unique: true,
   },
   email: String,
   provider: {

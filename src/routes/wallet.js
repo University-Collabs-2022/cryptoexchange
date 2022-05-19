@@ -59,8 +59,10 @@ server.get("/wallet", async (req, res) => {
       message: "Wallet not found",
     });
   } else {
-    for (let element of wallet.currency) {
-      const currencyObj = await currency.getCurrencyNameAndPrice(element.currencyId);
+    for (const element of wallet.currency) {
+      const currencyObj = await currency.getCurrencyNameAndPrice(
+        element.currencyId
+      );
       currencyObj["amount"] = element.amount;
       response.push(currencyObj);
     }
