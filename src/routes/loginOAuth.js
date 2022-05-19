@@ -42,10 +42,6 @@ server.post("/auth/login", async (req, res) => {
 
 server.post("/auth/changePassword", async (req, res) => {
   const { username, oldPassword, newPassword } = req.body;
-  let encryptedPassword
-  await encrypt.encryptPassword(newPassword).then(encryptedPass => {
-    encryptedPassword = encryptedPass;
-  })
 
   const user = await Users.findOne({ username });
   if (!user) {
@@ -68,6 +64,12 @@ server.post("/auth/changePassword", async (req, res) => {
       });
 
     }
+
+    let encryptedPassword
+    await encrypt.encryptPassword(newPassword).then(encryptedPass => {
+      encryptedPassword = encryptedPass;
+    })
+
     await Users.updateOne(
       { _id: user._id },
       { $set: { password: encryptedPassword } }
