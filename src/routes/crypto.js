@@ -3,6 +3,7 @@ const server = express();
 const Currency = require("../models/currency.js");
 const Users = require("../models/users.js");
 const Wallet = require("../models/wallet.js");
+const { getCurrencyNameAndPrice } = require("../services/currencyHelpers.js");
 
 server.use(express.json());
 
@@ -47,23 +48,27 @@ server.get("/AvailableCryptoToBuy", async (req, res) => {
 });
 
 server.get("/AvailableCryptoToSell", async (req, res) => {
-  const { username } = req.body;
+  const { username } = req.query;
 
   const user = await Users.findOne({ username });
   const wallet = await Wallet.findOne({ userId: user._id });
-
-  
+  let response = [];
  
-
   if (!wallet) {
     res.status(404).json({
       message: "Wallet not found",
     });
   } else {
 
+    for(var element of wallet.currency){
+      const currencyObj = await getCurrencyNameAndPrice(element.currencyId);
+      currencyObj["amount"] = element.amount;
+      response.push(currencyObj);
+    }
+
     res.status(200).json({
       message: "Available Crypto retrieved successfully",
-      wallet,
+      response,
     });
   }
 });
