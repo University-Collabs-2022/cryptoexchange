@@ -9,7 +9,7 @@ const { getCurrencyNameAndPrice } = require("../services/currencyHelpers.js");
 
 server.use(express.json());
 
-server.put("/founds", async (req, res) => {
+server.put("/funds", async (req, res) => {
   const { username, amount, password } = req.body;
 
   const user = await Users.findOne({ username });
