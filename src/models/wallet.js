@@ -1,23 +1,24 @@
 const mongoose = require("mongoose");
 
 const walletSchema = mongoose.Schema({
-    userId: {
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
+  },
+
+  currency: [
+    {
+      currencyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users'
+        ref: "Currency",
+      },
+
+      amount: {
+        type: Number,
+        require: true,
+      },
     },
-
-    currency: [{
-        currencyId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Currency'
-        },
-
-        amount: {
-            type: Number,
-            require: true
-        },
-    }
-    ]
+  ],
 });
 
 const Wallet = mongoose.model("Wallet", walletSchema);
