@@ -5,7 +5,7 @@ const Currency = require("../models/currency.js");
 const server = express();
 const currency = require("../services/currencyHelpers");
 const Transaction = require("../models/transaction");
-
+const constants = require("../constants/values");
 
 server.use(express.json());
 
@@ -16,6 +16,14 @@ server.post("/transaction", async (req, res) => {
     const wall = await Wallet.findOne({ userId: user._id });
     const baseCurrencyId = await currency.getCurrencyId(baseCurrencyName);
     const exchangeCurrencyId = await currency.getCurrencyId(exchangeCurrencyName);
+    const usdId = await currency.getCurrencyId(constants.usd);
+
+    if (baseCurrencyId === null || exchangeCurrencyId === null) {
+        res.status(404).json({
+            message: "Currency not found"
+        })
+        return;
+    }
 
     const baseCurrencyIndex = wall.currency.findIndex(elm =>
         elm.currencyId.equals(baseCurrencyId)
@@ -25,9 +33,26 @@ server.post("/transaction", async (req, res) => {
         elm.currencyId.equals(exchangeCurrencyId)
     );
 
+    const usdIndex = wall.currency.findIndex(elm =>
+        elm.currencyId.equals(usdId)
+    )
+
     const currencyForSold = await Currency.findOne({ currencyName: baseCurrencyName });
     const currencyForBuy = await Currency.findOne({ currencyName: exchangeCurrencyName });
     const boughtAmount = (amount * currencyForSold.ratio) / currencyForBuy.ratio;
+
+    let usdAmount = 0;
+    let cryptoAmount = 0;
+
+    if (baseCurrencyIndex === usdIndex) {
+        usdAmount = amount;
+        cryptoAmount = (-1) * boughtAmount;
+    } else if (exchangeCurrencyIndex === usdIndex) {
+        usdAmount = (-1) * boughtAmount;
+        cryptoAmount = amount;
+    }
+
+    const cryptoCurrencyIndex = (exchangeCurrencyIndex === usdIndex) ? baseCurrencyIndex : exchangeCurrencyIndex;
 
     const transaction = {
         userId: user._id,
@@ -36,8 +61,8 @@ server.post("/transaction", async (req, res) => {
         baseCurrencyAmount: amount,
         exchangeCurrencyAmount: boughtAmount,
         availableExchangeAmount: currencyForBuy.availableAmount - boughtAmount,
-        cryptoInWallet: wall.currency[baseCurrencyIndex].amount - amount,
-        currencyInWallet: wall.currency[exchangeCurrencyIndex].amount + boughtAmount,
+        cryptoInWallet: wall.currency[cryptoCurrencyIndex].amount - cryptoAmount,
+        currencyInWallet: wall.currency[usdIndex].amount - usdAmount,
         date: Date.now,
     }
 
@@ -53,23 +78,38 @@ server.post("/transaction", async (req, res) => {
         )
     }
 
-    await Transaction.create({
-        ...transaction,
-    }).then(async transaction => {
-        await Wallet.findOneAndUpdate({ userId: user._id, "currency.currencyId": baseCurrencyId }, {
-            "$set": { 'currency.$.amount': wall.currency[baseCurrencyIndex].amount - amount }
-        });
-        await Wallet.findOneAndUpdate({ userId: user._id, "currency.currencyId": exchangeCurrencyId }, {
-            "$set": { 'currency.$.amount': wall.currency[exchangeCurrencyIndex].amount + boughtAmount }
-        });
-        res.status(200).json({
-            message: "Transaction created successfully",
-            transaction,
+    if (transaction.availableExchangeAmount < 0) {
+        res.status(406).json({
+            message: "Insufficient crypto amount"
         })
+    } else if (transaction.cryptoInWallet < 0) {
+        res.status(406).json({
+            message: "Insufficient funds"
+        })
+    } else if (transaction.currencyInWallet < 0) {
+        res.status(406).json({
+            message: "Insufficient funds"
+        })
+    } else {
+        await Transaction.create({
+            ...transaction,
+        }).then(async transaction => {
+            await Wallet.findOneAndUpdate({ userId: user._id, "currency.currencyId": baseCurrencyId }, {
+                "$set": { 'currency.$.amount': wall.currency[baseCurrencyIndex].amount - amount }
+            });
+            await Wallet.findOneAndUpdate({ userId: user._id, "currency.currencyId": exchangeCurrencyId }, {
+                "$set": { 'currency.$.amount': wall.currency[exchangeCurrencyIndex].amount + boughtAmount }
+            });
+            await Currency.findOneAndUpdate({ currencyName: exchangeCurrencyName }, {
+                "$set": { 'availableAmount': transaction.availableExchangeAmount }
+            });
+            res.status(200).json({
+                message: "Transaction created successfully",
+                transaction,
+            })
+        }
+        )
     }
-    )
-
-
 });
 
 module.exports = server;
