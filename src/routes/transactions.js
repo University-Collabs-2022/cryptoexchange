@@ -134,4 +134,8 @@ server.post("/transaction", isAuth, async (req, res) => {
   }
 });
 
+server.get('/transaction-history', isAuth, async (req, res) => {
+  console.log('user: ', req.session.passport.user);
+})
+
 module.exports = server;
