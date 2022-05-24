@@ -136,6 +136,9 @@ server.post("/transaction", isAuth, async (req, res) => {
 
 server.get('/transaction-history', isAuth, async (req, res) => {
   console.log('user: ', req.session.passport.user);
+  const userId = req.session.passport.user._id;
+  const transactions = await Transaction.find({userId: userId});
+  console.log('transactions: ', transactions);
 })
 
 module.exports = server;
