@@ -17,9 +17,9 @@ async function isAuth(req, res, next) {
         });
         break;
       case "google":
-          authorizeCondition = await Users.findOne({
-            email: req.session.passport.user.emails[0].value,
-          });
+        authorizeCondition = await Users.findOne({
+          email: req.session.passport.user.emails[0].value,
+        });
         break;
       default:
         authorizeCondition = await Users.findOne({

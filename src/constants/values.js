@@ -1,6 +1,6 @@
 const constants = {
   UNAUTHORIZED_URL: "/api/unauthorized",
-  usd: 'xUSD',
+  usd: "xUSD",
   initialiAmount: 1000,
 };
 
