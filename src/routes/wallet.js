@@ -5,12 +5,13 @@ const encrypt = require("../services/encryptPassword");
 const server = express();
 const currency = require("../services/currencyHelpers");
 const constants = require("../constants/values");
+const isAuth = require("../middleware/isAuth");
 
 server.use(express.json());
 
-server.put("/Founds", async (req, res) => {
-  const { username, amount, password } = req.body;
-
+server.put("/funds", isAuth, async (req, res) => {
+  const { amount, password } = req.body;
+  const username = req.session.passport.user.username;
   const user = await Users.findOne({ username });
   const wall = await Wallet.findOne({ userId: user._id });
   const usdId = await currency.getCurrencyId(constants.usd);
