@@ -139,26 +139,32 @@ server.get('/transaction-history', isAuth, async (req, res) => {
   const transactions = await Transaction.find({userId: userId});
   const response = [];
 
-  for (const transaction of transactions) {
-    const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
-    const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
+  if(transactions) {
+    for (const transaction of transactions) {
+      const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
+      const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
 
-    response.push({
-      baseCurrencyName: baseCurrency.currencyName,
-      exchangeCurrencyName: exchangeCurrency.currencyName,
-      baseCurrencyAmount: transaction.baseCurrencyAmount,
-      exchangeCurrencyAmount: transaction.exchangeCurrencyAmount,
-      availableExchangeAmount: transaction.availableExchangeAmount,
-      cryptoInWallet: transaction.cryptoInWallet,
-      currencyInWallet: transaction.currencyInWallet,
-      transactionDate: transaction.transactionDate
-    })
+      response.push({
+        baseCurrencyName: baseCurrency.currencyName,
+        exchangeCurrencyName: exchangeCurrency.currencyName,
+        baseCurrencyAmount: transaction.baseCurrencyAmount,
+        exchangeCurrencyAmount: transaction.exchangeCurrencyAmount,
+        availableExchangeAmount: transaction.availableExchangeAmount,
+        cryptoInWallet: transaction.cryptoInWallet,
+        currencyInWallet: transaction.currencyInWallet,
+        transactionDate: transaction.transactionDate
+      })
+    }
+
+    res.status(200).json({
+      message: "Transactions were successfully retrieved",
+      response
+    });
+  } else {
+    res.status(204).json({
+      message: "No transactions"
+    });
   }
-
-  res.status(200).json({
-    message: "Transactions were successfully retrieved",
-    response
-  });
 })
 
 module.exports = server;
