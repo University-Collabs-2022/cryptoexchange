@@ -135,25 +135,28 @@ server.post("/transaction", isAuth, async (req, res) => {
 });
 
 server.get('/transaction-history', isAuth, async (req, res) => {
-  console.log('user: ', req.session.passport.user);
   const userId = req.session.passport.user._id;
   const transactions = await Transaction.find({userId: userId});
-  console.log('transactions: ', transactions);
-
-  let response = [];
+  const response = [];
 
   for (const transaction of transactions) {
     const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
     const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
-    console.log('currency: ', baseCurrency)
+
     response.push({
       baseCurrencyName: baseCurrency.currencyName,
-      exchangeCurrencyName: exchangeCurrency.currencyName
+      exchangeCurrencyName: exchangeCurrency.currencyName,
+      baseCurrencyAmount: transaction.baseCurrencyAmount,
+      exchangeCurrencyAmount: transaction.exchangeCurrencyAmount,
+      availableExchangeAmount: transaction.availableExchangeAmount,
+      cryptoInWallet: transaction.cryptoInWallet,
+      currencyInWallet: transaction.currencyInWallet,
+      transactionDate: transaction.transactionDate
     })
   }
 
   res.status(200).json({
-    message: "Available Crypto retrieved successfully",
+    message: "Transactions were successfully retrieved",
     response
   });
 })
