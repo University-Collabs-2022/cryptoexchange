@@ -139,6 +139,21 @@ server.get('/transaction-history', isAuth, async (req, res) => {
   const userId = req.session.passport.user._id;
   const transactions = await Transaction.find({userId: userId});
   console.log('transactions: ', transactions);
+
+  let response = [];
+
+  for (const transaction of transactions) {
+    const baseCurrency = await Currency.findById(transaction.baseCurrencyId)
+    console.log('currency: ', baseCurrency)
+    response.push({
+      baseCurrencyName: baseCurrency.currencyName
+    })
+  }
+
+  res.status(200).json({
+    message: "Available Crypto retrieved successfully",
+    response
+  });
 })
 
 module.exports = server;
