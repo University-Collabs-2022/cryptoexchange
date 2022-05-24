@@ -143,10 +143,12 @@ server.get('/transaction-history', isAuth, async (req, res) => {
   let response = [];
 
   for (const transaction of transactions) {
-    const baseCurrency = await Currency.findById(transaction.baseCurrencyId)
+    const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
+    const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
     console.log('currency: ', baseCurrency)
     response.push({
-      baseCurrencyName: baseCurrency.currencyName
+      baseCurrencyName: baseCurrency.currencyName,
+      exchangeCurrencyName: exchangeCurrency.currencyName
     })
   }
 
