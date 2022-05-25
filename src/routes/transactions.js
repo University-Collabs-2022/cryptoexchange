@@ -134,4 +134,45 @@ server.post("/transaction", isAuth, async (req, res) => {
   }
 });
 
+server.get('/transaction-history', isAuth, async (req, res) => {
+  const userId = req.session.passport.user._id;
+  const transactions = await Transaction.find({userId: userId});
+  const response = [];
+
+  if (!transactions) {
+    return res.status(204).json({
+      message: "No transactions"
+    });
+  }
+
+  for (const transaction of transactions) {
+    const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
+    const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
+    const  {
+      baseCurrencyAmount,
+      exchangeCurrencyAmount,
+      availableExchangeAmount,
+      cryptoInWallet,
+      currencyInWallet,
+      transactionDate
+  } = transaction;
+  
+    response.push({
+      baseCurrencyName: baseCurrency.currencyName,
+      exchangeCurrencyName: exchangeCurrency.currencyName,
+      baseCurrencyAmount,
+      exchangeCurrencyAmount,
+      availableExchangeAmount,
+      cryptoInWallet,
+      currencyInWallet,
+      transactionDate
+    })
+  }
+
+  return  res.status(200).json({
+      message: "Transactions were successfully retrieved",
+      response
+    });
+})
+
 module.exports = server;
