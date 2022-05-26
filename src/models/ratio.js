@@ -13,6 +13,6 @@ const ratioSchema = mongoose.Schema({
   },
 });
 
-const Wallet = mongoose.model("Wallet", walletSchema);
+const Ratio = mongoose.model("Ratio", ratioSchema);
 
-module.exports = Wallet;
+module.exports = Ratio;
