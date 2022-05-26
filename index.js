@@ -15,6 +15,7 @@ const mongoose = require("mongoose");
 const isAuth = require("./src/middleware/isAuth.js");
 const constants = require("./src/constants/values.js");
 const Users = require("./src/models/users.js");
+const Ratio = require("./src/models/ratio.js");
 
 const server = express();
 
@@ -27,6 +28,18 @@ mongoose.connect(
   },
   (e) => {
     console.log("db connection", !e ? "successfull" : e);
+
+    if (!e) {
+      Ratio.countDocuments({}, (err, count) => {
+        if (err) console.error(err);
+        else {
+          if (!count) {
+            createRatio();
+          }
+        }
+      })
+
+    }
   }
 );
 
@@ -63,3 +76,19 @@ server.use("/api/users/:userId", isAuth, async (req, res) => {
 
 console.log("server at http://localhost:1234/api/");
 server.listen(1234);
+
+//seeding for ratio
+const createRatio = async () => {
+  const ratioList = [
+      {
+        currencyId: '628ced88118f9e42be3e60ef',
+        ratio: 2.2
+      },
+      {
+          currencyId: '628ceee3118f9e42be3e60f4', 
+          ratio: 2.5,
+      }
+  ]; 
+
+  await Ratio.insertMany(ratioList);
+}
