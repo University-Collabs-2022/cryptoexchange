@@ -38,13 +38,13 @@ server.post("/transaction", isAuth, async (req, res) => {
     elm.currencyId.equals(usdId)
   );
 
-  const currencyForSold = await Currency.findOne({
+  const currencyForSale = await Currency.findOne({
     currencyName: baseCurrencyName,
   });
   const currencyForBuy = await Currency.findOne({
     currencyName: exchangeCurrencyName,
   });
-  const boughtAmount = (amount * currencyForSold.ratio) / currencyForBuy.ratio;
+  const boughtAmount = (amount * currencyForSale.ratio) / currencyForBuy.ratio;
 
   let usdAmount = 0;
   let cryptoAmount = 0;
@@ -126,6 +126,25 @@ server.post("/transaction", isAuth, async (req, res) => {
           $set: { availableAmount: transaction.availableExchangeAmount },
         }
       );
+      //Update ratio after each transaction
+      if (exchangeCurrencyName !== 'xUSD') {
+        const newRatio = currencyForBuy.ratio + Math.random() *  boughtAmount
+        await Currency.findOneAndUpdate(
+          { currencyName: exchangeCurrencyName },
+          {
+            $set: { ratio: newRatio },
+          }
+        );
+      }
+      if (baseCurrencyName !== 'xUSD') {
+        const newRatio = currencyForSale.ratio + Math.random() *  amount
+        await Currency.findOneAndUpdate(
+          { currencyName: baseCurrencyName },
+          {
+            $set: { ratio: newRatio },
+          }
+        );
+      }
       res.status(200).json({
         message: "Transaction created successfully",
         transaction,
@@ -136,7 +155,7 @@ server.post("/transaction", isAuth, async (req, res) => {
 
 server.get('/transaction-history', isAuth, async (req, res) => {
   const userId = req.session.passport.user._id;
-  const transactions = await Transaction.find({userId: userId});
+  const transactions = await Transaction.find({ userId: userId });
   const response = [];
 
   if (!transactions) {
@@ -148,15 +167,15 @@ server.get('/transaction-history', isAuth, async (req, res) => {
   for (const transaction of transactions) {
     const baseCurrency = await Currency.findById(transaction.baseCurrencyId);
     const exchangeCurrency = await Currency.findById(transaction.exchangeCurrencyId);
-    const  {
+    const {
       baseCurrencyAmount,
       exchangeCurrencyAmount,
       availableExchangeAmount,
       cryptoInWallet,
       currencyInWallet,
       transactionDate
-  } = transaction;
-  
+    } = transaction;
+
     response.push({
       baseCurrencyName: baseCurrency.currencyName,
       exchangeCurrencyName: exchangeCurrency.currencyName,
@@ -169,10 +188,10 @@ server.get('/transaction-history', isAuth, async (req, res) => {
     })
   }
 
-  return  res.status(200).json({
-      message: "Transactions were successfully retrieved",
-      response
-    });
+  return res.status(200).json({
+    message: "Transactions were successfully retrieved",
+    response
+  });
 })
 
 module.exports = server;
