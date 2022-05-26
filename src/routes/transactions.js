@@ -12,7 +12,7 @@ server.use(express.json());
 
 server.post("/transaction", isAuth, async (req, res) => {
   const { amount, baseCurrencyName, exchangeCurrencyName } = req.body;
-  
+
   const username = req.session.passport.user.username;
   const user = await Users.findOne({ username });
   const wall = await Wallet.findOne({ userId: user._id });
@@ -57,6 +57,18 @@ server.post("/transaction", isAuth, async (req, res) => {
     cryptoAmount = amount;
   }
 
+  if (exchangeCurrencyIndex === -1) {
+    const newCurrency = {
+      currencyId: exchangeCurrencyId,
+      amount: 0,
+    };
+
+    await Wallet.updateOne(
+      { _id: wall._id },
+      { $push: { currency: newCurrency } }
+    );
+  }
+
   const cryptoCurrencyIndex =
     exchangeCurrencyIndex === usdIndex
       ? baseCurrencyIndex
@@ -73,18 +85,6 @@ server.post("/transaction", isAuth, async (req, res) => {
     currencyInWallet: wall.currency[usdIndex].amount - usdAmount,
     date: Date.now,
   };
-
-  if (exchangeCurrencyIndex === -1) {
-    const newCurrency = {
-      currencyId: exchangeCurrencyId,
-      amount: 0,
-    };
-
-    await Wallet.updateOne(
-      { _id: wall._id },
-      { $push: { currency: newCurrency } }
-    );
-  }
 
   if (transaction.availableExchangeAmount < 0) {
     res.status(406).json({
