@@ -2,6 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 require("dotenv").config();
+const cors = require("cors");
 
 const gitHubRoutes = require("./src/routes/githubOAuth.js");
 const googleRoutes = require("./src/routes/googleOAuth.js");
@@ -54,6 +55,7 @@ server.use(
 // persistent login sessions (recommended).
 server.use(passport.initialize());
 server.use(passport.session());
+server.use(cors());
 
 server.use(googleRoutes);
 server.use(gitHubRoutes);
